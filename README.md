@@ -19,6 +19,10 @@ Git repo for BSides Workshop; an interactive course to design and create a simpl
 - .net SDK for building Agent. 6.0 and 4.7.2
     - https://dotnet.microsoft.com/en-us/download/visual-studio-sdks
 
+- Powershell SDK
+    - download from https://www.nuget.org/packages/Microsoft.PowerShell.SDK/
+    - or just run ```dotnet add package Microsoft.PowerShell.SDK``` after installing .net sdk
+
 - We will be using Python3 for the server 
     - VS Code link https://marketplace.visualstudio.com/items?itemName=ms-python.python
     - Stand Alone Install https://www.python.org/downloads/
@@ -48,9 +52,9 @@ Git repo for BSides Workshop; an interactive course to design and create a simpl
 - [x] HTTP beaconing server
 - [x] .net based reverse shell
 - [x] Reverse shell functionality 
-- [ ] Extend functionality with custom commands
-- [ ] Ability to load .net assemblies
-- [ ] Create a payloads to extend functionaliy
+- [x] Extend functionality with custom commands
+- [x] Ability to load .net assemblies
+- [x] Create a payloads to extend functionaliy
     - [ ] Keylogger
-    - [ ] Disable logging
-- [ ] Ability to run powershell scripts
+    - [x] Disable logging
+- [x] Ability to run powershell scripts

