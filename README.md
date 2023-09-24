@@ -19,10 +19,8 @@ Git repo for BSides Workshop; an interactive course to design and create a simpl
 - .net SDK for building Agent. 6.0 and 4.7.2
     - https://dotnet.microsoft.com/en-us/download/visual-studio-sdks
 
-- Powershell SDK and management dll (not 100% sure which one, or both, fixed the issue)
-    - after installing .net sdk, from the PWD of the C2 folder
-    - run ```dotnet add package Microsoft.PowerShell.SDK```
-    - also add ```dotnet add package Microsoft.PowerShell.Commands.Management``` 
+- Powershell SDK; after installing .net sdk
+    - run ```dotnet add package Microsoft.PowerShell.SDK --version 7.2```
 
 - We will be using Python3 for the server 
     - VS Code link https://marketplace.visualstudio.com/items?itemName=ms-python.python

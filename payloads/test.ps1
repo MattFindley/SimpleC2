@@ -1,0 +1,1 @@
+get-process | where -property ProcessName -eq "svchost"
