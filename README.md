@@ -1,6 +1,17 @@
 ## Continuation of Malware C2 Development
 Git repo for BSides Workshop; an interactive course to design and create a simple C2 toolset. We will be conintinuing to refine and imporve our C2 to learn the ins and outs of C# and .net programing.
 
+**C2 Usage**
+- Call back port port/IP is hard coded into top line C2/Program.cs and app.run in server/server.py
+- All payloads should be saved in to the payloads folder with ps1 extension for powershell and dll for .net assmeblies
+- Supports unmanaged powershell
+    - ```runps \<scriptname\> argument1 argument2 ...```
+- Supports reflecive assembly loading/and reuse
+    - ```load \<assemblyname\> ```
+    - ```run \<assemblyname\> argument1 argument2 ...```
+- All native commands are passed through and invoked via cmd.exe /c formating and stdout only is returned
+
+
 **Learning Objectives**
 - Intro to programing concepts
 - Use of Python Flask
